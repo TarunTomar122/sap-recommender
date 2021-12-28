@@ -1,4 +1,5 @@
 from flask import Flask
+
 from flask_pymongo import pymongo
 import certifi
 ca = certifi.where()
