@@ -102,7 +102,8 @@ class MediumScraper:
                             'content': storage,
                             'url': link,
                             'description': storage[:200],
-                            'date': datetime.datetime.now()
+                            'date': datetime.datetime.now(),
+                            'score':0,
                         })
 
                 except:

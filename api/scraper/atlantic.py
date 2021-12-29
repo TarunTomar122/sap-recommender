@@ -42,6 +42,7 @@ class AtlanticScraper:
                     # d['image']=article.find('img').get('href')
                     d['description'] = article.find(
                         'p', {'class': 'LandingRiver_dek__u9vaI'}).get_text()
+                    d['score']=0
                     # Make a request to article url
                     content = requests.get(d.get('url'))
                     # Get the soup object from the request text
