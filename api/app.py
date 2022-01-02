@@ -1,4 +1,4 @@
-from flask import Flask,jsonify
+from flask import Flask,jsonify,request
 from werkzeug.wrappers import response
 import db
 import pymongo
@@ -58,7 +58,18 @@ def reduceScore():
         db.db.articles.find_one_and_update({'title':articles[i]['title']},{ '$set':{'score':-1}})
     return "score_reduced"
 
+@app.route("/save_bookmark", methods=['POST'])
+def bookmark():
+    try:
+        title=request.json['title']
 
-
+            # save this article if the title doesn't already exist in the database
+        bookmark_article=db.db.articles.find_one({'title':title})
+        db.db.articles.delete_one({'title':title})
+        db.db.bookmarks.insert_one(bookmark_article)
+    
+        return "bookmarked"
+    except:
+        return "no such title"
 if __name__ == '__main__':
     app.run()
