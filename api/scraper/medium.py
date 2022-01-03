@@ -75,22 +75,22 @@ class MediumScraper:
                             for item in divsss:
                                 if item.name == 'p':
 
-                                    storage += 'PP'+item.get_text() + "\n"
+                                    storage += " \n" + item.get_text() + " \n"
 
-                                elif item.name == 'img' or item.name == 'fig':
-                                    storage += 'II' + item.get('src') + "\n"
+                                # elif item.name == 'img' or item.name == 'fig':
+                                #     storage += 'II' + item.get('src') + "\n"
 
                                 elif item.name == 'h1':
 
-                                    storage += 'HH' + item.get_text() + "\n"
+                                    storage += "\n# " + item.get_text() + " \n"
 
                                 elif item.name == 'h2':
 
-                                    storage += 'HH' + item.get_text() + "\n"
+                                    storage += "\n# " + item.get_text() + " \n"
 
                                 elif item.name == 'h3':
 
-                                    storage += 'HH' + item.get_text() + "\n"
+                                    storage += "\n# " + item.get_text() + " \n"
 
                         i += 1
 

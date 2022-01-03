@@ -52,7 +52,7 @@ class AtlanticScraper:
                         'p', {'class': 'ArticleParagraph_root__wy3UI'})
                     art_cont = ''
                     for para in paragraphs:
-                        art_cont += 'PP' + para.get_text() + "\n"
+                        art_cont += "\n" + para.get_text() + " \n"
                     # Save it in the dictionary as the article content
                     d['content'] = art_cont
 
