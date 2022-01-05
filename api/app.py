@@ -49,7 +49,7 @@ def compare(a, b):
 # cron examples
 
 
-@scheduler.task('cron', id='add_articles', hour='20')
+@scheduler.task('cron', id='add_articles', hour='23')
 def add_articles():
 
     print("Adding articles")
@@ -71,7 +71,7 @@ def add_articles():
     articles = sorted(list(db.db.articles.find()),
                       key=functools.cmp_to_key(compare))
 
-    for i in range(len(articles), len(articles)-10, -1):
+    for i in range(len(articles)-1, len(articles)-10, -1):
 
         title = articles[i]['title']
 
