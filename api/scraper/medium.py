@@ -6,18 +6,18 @@ import datetime
 class MediumScraper:
 
     urls = ["https://medium.com/tag/tech/latest", "https://medium.com/tag/tech/",
-            # "https://medium.com/tag/programming", "https://medium.com/tag/programming/latest",
+            "https://medium.com/tag/programming", "https://medium.com/tag/programming/latest",
             # "https://medium.com/tag/innovation", "https://medium.com/tag/innovation/latest",
             # "https://medium.com/tag/startups", "https://medium.com/tag/startups/latest",
-            # "https://medium.com/tag/lifelessons", "https://medium.com/tag/lifelessons/latest",
+            "https://medium.com/tag/lifelessons", "https://medium.com/tag/lifelessons/latest",
             # "https://medium.com/tag/design", "https://medium.com/tag/design/latest",
             # "https://medium.com/tag/business", "https://medium.com/tag/business/latest",
             # "https://medium.com/tag/articles/latest", "https://medium.com/tag/articles/",
             # "https://medium.com/tag/writing", "https://medium.com/tag/writing/latest",
-            # "https://medium.com/tag/life", "https://medium.com/tag/life/latest",
+            "https://medium.com/tag/life", "https://medium.com/tag/life/latest",
             # "https://medium.com/tag/life-hacks", "https://medium.com/tag/life-hacks/latest",
             # "https://medium.com/tag/creativity", "https://medium.com/tag/creativity/latest",
-            # "https://medium.com/tag/productivity", "https://medium.com/tag/productivity/latest",
+            "https://medium.com/tag/productivity", "https://medium.com/tag/productivity/latest",
             ]
     articlesData = []
 

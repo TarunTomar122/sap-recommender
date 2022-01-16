@@ -6,8 +6,6 @@ COPY . /app
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python"]
+EXPOSE 5000
 
-EXPOSE 8080
-
-CMD ["app.py"]
+ENTRYPOINT ["python", "-m", "flask", "run", "--host=0.0.0.0"]

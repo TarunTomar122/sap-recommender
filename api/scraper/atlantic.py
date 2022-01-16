@@ -8,7 +8,7 @@ class AtlanticScraper:
     urls = [
         "https://www.theatlantic.com/latest/",
         # "https://www.theatlantic.com/most-popular/",
-        # "https://www.theatlantic.com/technology/",
+        "https://www.theatlantic.com/technology/",
         # "https://www.theatlantic.com/science/",
         # "https://www.theatlantic.com/projects/",
         # "https://www.theatlantic.com/international/",

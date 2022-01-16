@@ -49,7 +49,10 @@ def compare(a, b):
 # cron examples
 
 
-@scheduler.task('cron', id='add_articles', hour='23')
+# @scheduler.task('cron', id='add_articles', second=2)
+
+#scheduler a task to run every 10 hours
+@scheduler.task('cron', id='add_articles', hour='*/10')
 def add_articles():
 
     print("Adding articles")
@@ -57,10 +60,10 @@ def add_articles():
     atlanticScraper = AtlanticScraper()
     mediumScraper = MediumScraper()
 
-    atlanticArticles = atlanticScraper.scrapeIt()
     mediumArticles = mediumScraper.scrapeIt()
-
-    articles = atlanticArticles + mediumArticles
+    atlanticArticles = atlanticScraper.scrapeIt()
+    
+    articles = mediumArticles + atlanticArticles 
 
     for article in articles:
 
@@ -71,18 +74,20 @@ def add_articles():
     articles = sorted(list(db.db.articles.find()),
                       key=functools.cmp_to_key(compare))
 
-    for i in range(len(articles)-1, len(articles)-10, -1):
+    for i in range(len(articles)-1, len(articles)-20, -1):
 
         title = articles[i]['title']
 
+        thisArticle = db.db.articles.find_one({"title": title})
+        if thisArticle['score']!=0:
+            # Add this article in model for ml
+                db.db.bigData.insert_one({
+                    'title': title,
+                    'score': 0
+                })
+
         # Remove this article from db
         db.db.articles.delete_one({'title': title})
-
-        # Add this article in model for ml
-        db.db.bigData.insert_one({
-            'title': title,
-            'score': 0
-        })
 
     print("Articles added")
 
