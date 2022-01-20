@@ -1,3 +1,4 @@
+import sched
 from flask import Flask, jsonify, request
 from werkzeug.wrappers import response
 import db
@@ -32,38 +33,35 @@ def compare(a, b):
     aScore = a.get('score', 0)
     bScore = b.get('score', 0)
 
-    if aDate.date() == bDate.date():
+    # print(aDate.date() == bDate.date())
 
-        if aScore > bScore:
-            return -1
-        elif aScore < bScore:
+    if aScore == bScore:
+
+        if aDate.date() == bDate.date():
+            return 0
+        elif aDate.date() < bDate.date():
             return 1
         else:
-            return 0
+            return -1
 
-    elif aDate.date() > bDate.date():
+    elif aScore > bScore:
         return -1
     else:
         return 1
 
-# cron examples
-
-
-# @scheduler.task('cron', id='add_articles', second=2)
-
-#scheduler a task to run every 10 hours
+# scheduler a task to run every 10 hours
 @scheduler.task('cron', id='add_articles', hour='*/10')
 def add_articles():
 
     print("Adding articles")
 
-    atlanticScraper = AtlanticScraper()
+    # atlanticScraper = AtlanticScraper()
     mediumScraper = MediumScraper()
 
     mediumArticles = mediumScraper.scrapeIt()
-    atlanticArticles = atlanticScraper.scrapeIt()
-    
-    articles = mediumArticles + atlanticArticles 
+    # atlanticArticles = atlanticScraper.scrapeIt()
+
+    articles = mediumArticles 
 
     for article in articles:
 
@@ -71,16 +69,32 @@ def add_articles():
         if db.db.articles.find_one({"title": article['title']}) is None:
             db.db.articles.insert_one(article)
 
-    articles = sorted(list(db.db.articles.find()),
-                      key=functools.cmp_to_key(compare))
+    print("Articles added")
 
-    for i in range(len(articles)-1, len(articles)-20, -1):
+
+@scheduler.task('cron', id='delete_articles', day='*/5')
+def delete_articles():
+
+    articles = sorted(list(db.db.articles.find()),
+                    key=functools.cmp_to_key(compare))
+
+    for i in range(len(articles)-1, len(articles)-40, -1):
 
         title = articles[i]['title']
 
         thisArticle = db.db.articles.find_one({"title": title})
-        if thisArticle['score']!=0:
-            # Add this article in model for ml
+        
+        if thisArticle['score'] != 0:
+
+            if thisArticle['score'] == -1000:
+                # Add this article in model for ml
+                db.db.bigData.insert_one({
+                    'title': title,
+                    'score': 1
+                })
+
+            else:
+
                 db.db.bigData.insert_one({
                     'title': title,
                     'score': 0
@@ -88,9 +102,6 @@ def add_articles():
 
         # Remove this article from db
         db.db.articles.delete_one({'title': title})
-
-    print("Articles added")
-
 
 @app.route("/get_articles", methods=['GET'])
 def display():
@@ -102,6 +113,9 @@ def display():
 
         display_articles = []
         for i in range(10):
+
+            print(articles[i]['score'], articles[i]
+                  ['title'], articles[i]['date'])
 
             display_articles.append({
                 'title': articles[i]['title'],
@@ -145,14 +159,8 @@ def getArticle():
     # update the score of this article
     db.db.articles.update_one(
         {'title': title},
-        {'$inc': {'score': -100}}
+        {'$inc': {'score': -1000}}
     )
-
-    # Add this article in model for ml
-    db.db.bigData.insert_one({
-        'title': title,
-        'score': 1
-    })
 
     responseArticle = {
         'title': article['title'],
@@ -197,9 +205,6 @@ def bookmark():
         title = request.json['title']
         bookmark_article = db.db.articles.find_one({'title': title})
         db.db.bookmarks.insert_one(bookmark_article)
-
-        # delete this article from the articles collection
-        db.db.articles.delete_one({'title': title})
 
         return "bookmarked"
     except:
