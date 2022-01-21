@@ -50,7 +50,10 @@ def compare(a, b):
         return 1
 
 # scheduler a task to run every 10 hours
-@scheduler.task('cron', id='add_articles', hour='*/10')
+# @scheduler.task('cron', id='add_articles', hour='*/10')
+
+
+@scheduler.task('cron', id='add_articles', hour='*')
 def add_articles():
 
     print("Adding articles")
@@ -61,7 +64,7 @@ def add_articles():
     mediumArticles = mediumScraper.scrapeIt()
     # atlanticArticles = atlanticScraper.scrapeIt()
 
-    articles = mediumArticles 
+    articles = mediumArticles
 
     for article in articles:
 
@@ -72,18 +75,18 @@ def add_articles():
     print("Articles added")
 
 
-@scheduler.task('cron', id='delete_articles', day='*/5')
+@scheduler.task('cron', id='delete_articles',  week='*', day_of_week='tue')
 def delete_articles():
 
     articles = sorted(list(db.db.articles.find()),
-                    key=functools.cmp_to_key(compare))
+                      key=functools.cmp_to_key(compare))
 
     for i in range(len(articles)-1, len(articles)-40, -1):
 
         title = articles[i]['title']
 
         thisArticle = db.db.articles.find_one({"title": title})
-        
+
         if thisArticle['score'] != 0:
 
             if thisArticle['score'] == -1000:
@@ -102,6 +105,7 @@ def delete_articles():
 
         # Remove this article from db
         db.db.articles.delete_one({'title': title})
+
 
 @app.route("/get_articles", methods=['GET'])
 def display():
