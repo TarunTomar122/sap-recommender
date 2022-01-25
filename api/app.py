@@ -53,26 +53,26 @@ def compare(a, b):
 # @scheduler.task('cron', id='add_articles', hour='*/10')
 
 
-@scheduler.task('cron', id='add_articles', hour='*')
-def add_articles():
+# @scheduler.task('cron', id='add_articles', second='*')
+# def add_articles():
 
-    print("Adding articles")
+#     print("Adding articles")
 
-    # atlanticScraper = AtlanticScraper()
-    mediumScraper = MediumScraper()
+#     # atlanticScraper = AtlanticScraper()
+#     mediumScraper = MediumScraper()
 
-    mediumArticles = mediumScraper.scrapeIt()
-    # atlanticArticles = atlanticScraper.scrapeIt()
+#     mediumArticles = mediumScraper.scrapeIt()
+#     # atlanticArticles = atlanticScraper.scrapeIt()
 
-    articles = mediumArticles
+#     articles = mediumArticles
 
-    for article in articles:
+#     for article in articles:
 
-        # save this article if the title doesn't already exist in the database
-        if db.db.articles.find_one({"title": article['title']}) is None:
-            db.db.articles.insert_one(article)
+#         # save this article if the title doesn't already exist in the database
+#         if db.db.articles.find_one({"title": article['title']}) is None:
+#             db.db.articles.insert_one(article)
 
-    print("Articles added")
+#     print("Articles added")
 
 
 @scheduler.task('cron', id='delete_articles',  week='*', day_of_week='tue')
@@ -81,7 +81,7 @@ def delete_articles():
     articles = sorted(list(db.db.articles.find()),
                       key=functools.cmp_to_key(compare))
 
-    for i in range(len(articles)-1, len(articles)-40, -1):
+    for i in range(len(articles)-1, len(articles)-10, -1):
 
         title = articles[i]['title']
 
@@ -223,6 +223,24 @@ def test():
     }
     return jsonify(response)
 
+
+@app.route("/add_articles", methods=["GET"])
+def add_articles():
+    # atlanticScraper = AtlanticScraper()
+    mediumScraper = MediumScraper()
+
+    mediumArticles = mediumScraper.scrapeIt()
+    # atlanticArticles = atlanticScraper.scrapeIt()
+
+    articles = mediumArticles
+
+    for article in articles:
+
+        # save this article if the title doesn't already exist in the database
+        if db.db.articles.find_one({"title": article['title']}) is None:
+            db.db.articles.insert_one(article)
+    
+    return "articles added"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
